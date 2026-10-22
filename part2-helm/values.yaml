@@ -1,0 +1,5 @@
+auth:
+  postgresPassword: secretpassword
+primary:
+  persistence:
+    size: 1Gi
