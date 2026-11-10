@@ -1,0 +1,24 @@
+---
+- name: Configure nginx with template
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Deploy nginx config
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ server_name }}
+      notify: Restart nginx
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/{{ server_name }}
+        dest: /etc/nginx/sites-enabled/{{ server_name }}
+        state: link
+      notify: Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted

@@ -1,0 +1,35 @@
+---
+- name: Configure web servers
+  hosts: webservers
+  become: yes
+  vars:
+    http_port: 80
+    app_name: myapp
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - nginx
+          - python3
+          - git
+        state: present
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create app directory
+      file:
+        path: /var/www/{{ app_name }}
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data

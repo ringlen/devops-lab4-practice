@@ -1,0 +1,38 @@
+---
+- name: Advanced playbook examples
+  hosts: all
+  become: yes
+  vars:
+    users:
+      - name: deploy
+        groups: sudo
+      - name: app
+        groups: www-data
+
+  tasks:
+    - name: Install on Debian
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install on RedHat
+      yum:
+        name: nginx
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        append: yes
+      loop: "{{ users }}"
+
+    - name: Copy files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - { src: 'file1.txt', dest: '/tmp/file1.txt' }
+        - { src: 'file2.txt', dest: '/tmp/file2.txt' }
